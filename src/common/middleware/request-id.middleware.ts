@@ -5,15 +5,15 @@ import { randomUUID } from 'crypto';
 @Injectable()
 export class RequestIdMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
-    // Generate unique request ID
+    // Generate a unique request ID
     const requestId = randomUUID();
-    
-    // Attach request ID to request object
-    (req as any).id = requestId;
-    
-    // Optionally add to response headers for client visibility
-    res.setHeader('X-Request-Id', requestId);
-    
+
+    // Attach request ID to the request object
+    (req as any).requestId = requestId;
+
+    // Optionally add request ID to response headers for client tracking
+    res.setHeader('X-Request-ID', requestId);
+
     next();
   }
 }

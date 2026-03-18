@@ -55,20 +55,20 @@ This implementation plan breaks down the FX Trading Backend into discrete coding
     - _Requirements: 19.1, 19.7, 19.8_
 
 - [-] 3. Common utilities and infrastructure
-  - [ ] 3.1 Create global exception filter
+  - [x] 3.1 Create global exception filter
     - Implement GlobalExceptionFilter to catch all exceptions
     - Format error responses with statusCode, message, error, errorCode, requestId, timestamp
     - Log errors with severity, timestamp, stack trace
     - Map HTTP exceptions to appropriate error codes
     - _Requirements: 12.1, 12.2, 12.6_
 
-  - [ ] 3.2 Create request ID middleware
+  - [x] 3.2 Create request ID middleware
     - Generate unique request ID for each incoming request
     - Attach request ID to request object
     - Include request ID in all error responses
     - _Requirements: 12.6_
 
-  - [ ] 3.3 Create validation DTOs
+  - [x] 3.3 Create validation DTOs
     - Create RegisterDto with email (IsEmail) and password (MinLength 8) validation
     - Create VerifyEmailDto with userId and otp validation
     - Create LoginDto with email and password validation
@@ -78,7 +78,7 @@ This implementation plan breaks down the FX Trading Backend into discrete coding
     - Create PaginationDto with page (default 1) and limit (default 20, max 100)
     - _Requirements: 11.1, 11.3, 11.5, 11.6_
 
-  - [ ] 3.4 Create custom decorators
+  - [-] 3.4 Create custom decorators
     - Create @CurrentUser() decorator to extract user from request
     - Create @Public() decorator to mark endpoints as public (skip JWT guard)
     - _Requirements: 16.2_
