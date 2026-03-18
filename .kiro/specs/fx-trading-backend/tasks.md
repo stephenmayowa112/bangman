@@ -78,12 +78,12 @@ This implementation plan breaks down the FX Trading Backend into discrete coding
     - Create PaginationDto with page (default 1) and limit (default 20, max 100)
     - _Requirements: 11.1, 11.3, 11.5, 11.6_
 
-  - [-] 3.4 Create custom decorators
+  - [x] 3.4 Create custom decorators
     - Create @CurrentUser() decorator to extract user from request
     - Create @Public() decorator to mark endpoints as public (skip JWT guard)
     - _Requirements: 16.2_
 
-- [ ] 4. Email service implementation
+- [-] 4. Email service implementation
   - [ ] 4.1 Create EmailService with nodemailer
     - Configure SMTP transport with environment variables
     - Implement sendOTP() method with HTML template
