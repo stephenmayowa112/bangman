@@ -83,8 +83,8 @@ This implementation plan breaks down the FX Trading Backend into discrete coding
     - Create @Public() decorator to mark endpoints as public (skip JWT guard)
     - _Requirements: 16.2_
 
-- [-] 4. Email service implementation
-  - [ ] 4.1 Create EmailService with nodemailer
+- [x] 4. Email service implementation
+  - [x] 4.1 Create EmailService with nodemailer
     - Configure SMTP transport with environment variables
     - Implement sendOTP() method with HTML template
     - Add retry logic: 2 attempts with 5-second delay
@@ -93,15 +93,15 @@ This implementation plan breaks down the FX Trading Backend into discrete coding
     - Include application name and sender email in all emails
     - _Requirements: 18.1, 18.2, 18.4, 18.5, 18.6_
 
-  - [ ] 4.2 Write unit tests for EmailService
+  - [x] 4.2 Write unit tests for EmailService
     - Test successful email sending
     - Test retry logic on failure
     - Test timeout handling
     - Mock nodemailer transport
     - _Requirements: 20.5_
 
-- [ ] 5. Authentication service implementation
-  - [ ] 5.1 Create AuthenticationService with user registration
+- [-] 5. Authentication service implementation
+  - [-] 5.1 Create AuthenticationService with user registration
     - Implement register() method: validate email/password, hash password with bcrypt (cost 10), create user, generate 6-digit OTP, hash OTP, set 10-minute expiration, save OTP, send email, create wallet with 1000 NGN
     - Return userId and success message
     - Handle duplicate email with 409 error
