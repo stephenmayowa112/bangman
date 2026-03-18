@@ -6,7 +6,7 @@ This implementation plan breaks down the FX Trading Backend into discrete coding
 
 ## Tasks
 
-- [ ] 1. Project setup and infrastructure configuration
+- [x] 1. Project setup and infrastructure configuration
   - Initialize NestJS project with TypeScript
   - Install dependencies: @nestjs/typeorm, @nestjs/jwt, @nestjs/passport, @nestjs/throttler, @nestjs/swagger, typeorm, pg, redis, bcrypt, class-validator, class-transformer, nodemailer, axios, helmet
   - Configure environment variables (.env file with DATABASE_URL, REDIS_URL, JWT_SECRET, JWT_REFRESH_SECRET, SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, FX_API_URL)
@@ -19,31 +19,31 @@ This implementation plan breaks down the FX Trading Backend into discrete coding
   - _Requirements: 17.1, 17.2, 17.3, 16.5, 16.6, 13.1_
 
 - [ ] 2. Database entities and migrations
-  - [ ] 2.1 Create User entity
+  - [x] 2.1 Create User entity
     - Define User entity with id (UUID), email (unique), passwordHash, isVerified (default false), createdAt, updatedAt
     - Add unique constraint on email field
     - Add relations: OneToOne with Wallet, OneToMany with OTP and Transaction
     - _Requirements: 19.2_
 
-  - [ ] 2.2 Create OTP entity
+  - [x] 2.2 Create OTP entity
     - Define OTP entity with id (UUID), userId (FK), otpHash, expiresAt, isUsed (default false), createdAt
     - Add ManyToOne relation to User with CASCADE delete
     - _Requirements: 19.6_
 
-  - [ ] 2.3 Create Wallet entity
+  - [x] 2.3 Create Wallet entity
     - Define Wallet entity with id (UUID), userId (FK, unique), createdAt, updatedAt
     - Add OneToOne relation to User with CASCADE delete
     - Add OneToMany relation to WalletBalance
     - _Requirements: 19.3_
 
-  - [ ] 2.4 Create WalletBalance entity
+  - [x] 2.4 Create WalletBalance entity
     - Define WalletBalance entity with id (UUID), walletId (FK), currency (VARCHAR(3)), balance (DECIMAL(18,6) default 0), createdAt, updatedAt
     - Add CHECK constraint: balance >= 0
     - Add unique index on (walletId, currency)
     - Add ManyToOne relation to Wallet with CASCADE delete
     - _Requirements: 19.4, 19.9_
 
-  - [ ] 2.5 Create Transaction entity
+  - [-] 2.5 Create Transaction entity
     - Define Transaction entity with id (UUID), userId (FK), type (ENUM: FUNDING/CONVERSION/TRADE), sourceCurrency, targetCurrency, sourceAmount, targetAmount, fxRate, status (ENUM: SUCCESS/FAILED, default SUCCESS), idempotencyKey (unique), createdAt
     - Add ManyToOne relation to User with CASCADE delete
     - Add unique constraint on idempotencyKey
@@ -349,24 +349,24 @@ This implementation plan breaks down the FX Trading Backend into discrete coding
     - Use fast-check to generate random amounts and FX rates
     - Verify targetAmount = sourceAmount × fxRate (within floating-point precision)
 
-  - [~] 11.5 Write property test for atomic balance updates
+  - [ ] 11.5 Write property test for atomic balance updates
     - **Property 31: Atomic Balance Updates for Conversions**
     - **Validates: Requirements 7.4, 8.5**
     - Verify source balance decreases and target balance increases atomically
     - Simulate transaction failure and verify rollback
 
-  - [~] 11.6 Write property test for transaction atomicity
+  - [ ] 11.6 Write property test for transaction atomicity
     - **Property 22: Transaction Atomicity and Rollback**
     - **Validates: Requirements 5.7, 14.3**
     - Simulate failures at various points in conversion flow
     - Verify all changes are rolled back on failure
 
-  - [~] 11.7 Write property test for idempotency in conversions
+  - [ ] 11.7 Write property test for idempotency in conversions
     - **Property 34: Idempotency for Conversions**
     - **Validates: Requirements 7.11, 15.3**
     - Verify duplicate idempotency key returns original result without re-executing conversion
 
-  - [~] 11.8 Write unit tests for TradingService
+  - [ ] 11.8 Write unit tests for TradingService
     - Test conversion calculation accuracy
     - Test sufficient balance verification
     - Test insufficient balance rejection (400)
@@ -383,7 +383,7 @@ This implementation plan breaks down the FX Trading Backend into discrete coding
     - _Requirements: 20.3_
 
 - [ ] 12. API controllers implementation
-  - [~] 12.1 Create AuthController with authentication endpoints
+  - [ ] 12.1 Create AuthController with authentication endpoints
     - POST /auth/register: call AuthService.register(), return 201 with userId and message
     - POST /auth/verify-email: call AuthService.verifyEmail(), return 200 with success message
     - POST /auth/login: call AuthService.login(), return 200 with access and refresh tokens
@@ -392,14 +392,14 @@ This implementation plan breaks down the FX Trading Backend into discrete coding
     - Add Swagger decorators with request/response schemas, status codes, descriptions
     - _Requirements: 13.2, 13.3, 13.4_
 
-  - [~] 12.2 Create WalletController with wallet endpoints
+  - [ ] 12.2 Create WalletController with wallet endpoints
     - GET /wallet/balances: protected endpoint, call WalletService.getBalances(), return 200 with balance array
     - POST /wallet/fund: protected endpoint, call WalletService.fundWallet(), return 201 with transaction
     - Add @UseGuards(JwtAuthGuard, VerifiedUserGuard) to protected endpoints
     - Add Swagger decorators with authentication requirements
     - _Requirements: 13.2, 13.3, 13.4_
 
-  - [~] 12.3 Create TradingController with trading endpoints
+  - [ ] 12.3 Create TradingController with trading endpoints
     - POST /trading/convert: protected endpoint, call TradingService.convertCurrency(), return 201 with conversion result
     - POST /trading/trade: protected endpoint, call TradingService.trade(), return 201 with trade result
     - GET /trading/rates: protected endpoint with query params (from, to), call FXService.getRate(), return 200 with rate and timestamp
@@ -407,7 +407,7 @@ This implementation plan breaks down the FX Trading Backend into discrete coding
     - Add Swagger decorators
     - _Requirements: 13.2, 13.3, 13.4_
 
-  - [~] 12.4 Create TransactionController with transaction endpoints
+  - [ ] 12.4 Create TransactionController with transaction endpoints
     - GET /transactions: protected endpoint with query params (page, limit, type, currency, startDate, endDate), call TransactionService.getTransactionHistory(), return 200 with paginated results
     - GET /transactions/:id: protected endpoint, call TransactionService.getTransactionById(), return 200 with transaction or 404
     - Add @UseGuards(JwtAuthGuard, VerifiedUserGuard) to all endpoints
@@ -415,26 +415,26 @@ This implementation plan breaks down the FX Trading Backend into discrete coding
     - _Requirements: 13.2, 13.3, 13.4_
 
 - [ ] 13. Guards and security implementation
-  - [~] 13.1 Create JwtAuthGuard
+  - [ ] 13.1 Create JwtAuthGuard
     - Extend AuthGuard('jwt') from @nestjs/passport
     - Implement canActivate() to validate JWT token
     - Implement handleRequest() to throw UnauthorizedException for invalid tokens
     - _Requirements: 16.2, 16.3_
 
-  - [~] 13.2 Create JWT strategy
+  - [ ] 13.2 Create JWT strategy
     - Implement PassportStrategy for JWT validation
     - Extract token from Authorization header (Bearer token)
     - Validate token signature with JWT_SECRET
     - Return user payload (userId, email) on success
     - _Requirements: 16.1, 16.2_
 
-  - [~] 13.3 Create VerifiedUserGuard
+  - [ ] 13.3 Create VerifiedUserGuard
     - Implement CanActivate interface
     - Check user.isVerified flag from request
     - Throw ForbiddenException if not verified
     - _Requirements: 2.5, 5.8_
 
-  - [~] 13.4 Configure rate limiting with @nestjs/throttler
+  - [ ] 13.4 Configure rate limiting with @nestjs/throttler
     - Set global rate limit: 60 requests per minute
     - Override for public endpoints: 10 requests per minute (auth/login, auth/register)
     - Override for trading endpoints: 30 requests per minute
@@ -443,51 +443,51 @@ This implementation plan breaks down the FX Trading Backend into discrete coding
     - Return 429 when rate limit exceeded
     - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5, 10.6_
 
-  - [~] 13.5 Write property test for JWT signature validation
+  - [ ] 13.5 Write property test for JWT signature validation
     - **Property 51: JWT Signature Validation**
     - **Validates: Requirements 16.2**
     - Generate tokens with invalid signatures
     - Verify all requests with invalid signatures are rejected with 401
 
-  - [~] 13.6 Write property test for resource owner authorization
+  - [ ] 13.6 Write property test for resource owner authorization
     - **Property 53: Resource Owner Authorization**
     - **Validates: Requirements 16.9**
     - Attempt to access resources belonging to different users
     - Verify all unauthorized access attempts are rejected with 403
 
-- [~] 14. Checkpoint - Ensure API and security tests pass
+- [ ] 14. Checkpoint - Ensure API and security tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 15. Integration tests
-  - [~] 15.1 Write end-to-end registration and verification flow test
+  - [ ] 15.1 Write end-to-end registration and verification flow test
     - Test complete flow: register → receive OTP → verify email → login → access protected endpoint
     - Verify wallet created with 1000 NGN
     - _Requirements: 1.1, 1.4, 2.1, 3.1, 4.3_
 
-  - [~] 15.2 Write end-to-end funding flow test
+  - [ ] 15.2 Write end-to-end funding flow test
     - Test complete flow: login → fund wallet → verify balance increased → check transaction history
     - Test idempotency with duplicate request
     - _Requirements: 5.1, 5.4, 9.1_
 
-  - [~] 15.3 Write end-to-end conversion flow test
+  - [ ] 15.3 Write end-to-end conversion flow test
     - Test complete flow: login → fund wallet → convert currency → verify both balances updated → check transaction history
     - Test insufficient balance rejection
     - Test idempotency with duplicate request
     - _Requirements: 7.1, 7.2, 7.4, 7.11, 9.1_
 
-  - [~] 15.4 Write end-to-end trade flow test
+  - [ ] 15.4 Write end-to-end trade flow test
     - Test complete flow: login → fund wallet → trade NGN for USD → trade USD back to NGN → verify balances
     - Test transaction history shows TRADE type
     - _Requirements: 8.1, 8.2, 8.4, 9.1_
 
-  - [~] 15.5 Write concurrent operations test
+  - [ ] 15.5 Write concurrent operations test
     - Test multiple concurrent funding operations on same wallet
     - Test multiple concurrent conversions on same wallet
     - Verify pessimistic locking prevents race conditions
     - Verify final balances are correct
     - _Requirements: 14.4, 14.5, 20.7_
 
-  - [~] 15.6 Write rate limiting integration test
+  - [ ] 15.6 Write rate limiting integration test
     - Test rate limits for public endpoints (10/min)
     - Test rate limits for authenticated endpoints (60/min)
     - Test rate limits for trading endpoints (30/min)
@@ -495,13 +495,13 @@ This implementation plan breaks down the FX Trading Backend into discrete coding
     - Verify rate limit headers present
     - _Requirements: 10.1, 10.2, 10.3, 10.5, 10.6_
 
-  - [~] 15.7 Write transaction rollback test
+  - [ ] 15.7 Write transaction rollback test
     - Simulate database failure during conversion
     - Verify all balance changes are rolled back
     - Verify no transaction record created
     - _Requirements: 14.3, 20.6_
 
-  - [~] 15.8 Write FX service integration test
+  - [ ] 15.8 Write FX service integration test
     - Test rate fetching from external API (mock API)
     - Test cache hit returns cached value
     - Test cache miss triggers API call
@@ -510,28 +510,28 @@ This implementation plan breaks down the FX Trading Backend into discrete coding
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6_
 
 - [ ] 16. Configuration and environment setup
-  - [~] 16.1 Create ConfigModule with validation
+  - [ ] 16.1 Create ConfigModule with validation
     - Define configuration schema with class-validator
     - Validate required environment variables on startup: DATABASE_URL, REDIS_URL, JWT_SECRET, JWT_REFRESH_SECRET, SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, FX_API_URL
     - Provide default values for non-critical parameters (PORT=3000, NODE_ENV=development)
     - Fail startup with descriptive error if required variables missing
     - _Requirements: 17.1, 17.2, 17.3, 17.4, 17.5_
 
-  - [~] 16.2 Create environment-specific configuration files
+  - [ ] 16.2 Create environment-specific configuration files
     - Create .env.example with all required variables
     - Create .env.development with development defaults
     - Create .env.test with test database and Redis URLs
     - Document all environment variables in README
     - _Requirements: 17.6_
 
-  - [~] 16.3 Configure TypeORM for different environments
+  - [ ] 16.3 Configure TypeORM for different environments
     - Development: logging enabled, synchronize false (use migrations)
     - Test: in-memory or separate test database, synchronize true
     - Production: logging errors only, synchronize false, SSL enabled
     - _Requirements: 17.6_
 
 - [ ] 17. Documentation
-  - [~] 17.1 Create comprehensive README.md
+  - [ ] 17.1 Create comprehensive README.md
     - Project overview and features
     - Technology stack
     - Prerequisites (Node.js, PostgreSQL, Redis)
@@ -544,7 +544,7 @@ This implementation plan breaks down the FX Trading Backend into discrete coding
     - Project structure overview
     - _Requirements: 13.1_
 
-  - [~] 17.2 Enhance Swagger documentation
+  - [ ] 17.2 Enhance Swagger documentation
     - Add API title, description, version
     - Add authentication section with JWT bearer token
     - Add example requests and responses for all endpoints
@@ -552,20 +552,20 @@ This implementation plan breaks down the FX Trading Backend into discrete coding
     - Add tags to group related endpoints
     - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5_
 
-  - [~] 17.3 Create API usage examples
+  - [ ] 17.3 Create API usage examples
     - Document complete user journey: registration → verification → login → funding → conversion → transaction history
     - Provide curl examples for all endpoints
     - Document error handling and common issues
     - _Requirements: 13.4_
 
 - [ ] 18. Final integration and testing
-  - [~] 18.1 Set up test database and Redis for integration tests
+  - [ ] 18.1 Set up test database and Redis for integration tests
     - Configure test database connection
     - Configure test Redis instance
     - Create database setup/teardown scripts for tests
     - _Requirements: 20.5, 20.8_
 
-  - [~] 18.2 Configure fast-check for property-based tests
+  - [ ] 18.2 Configure fast-check for property-based tests
     - Install fast-check library
     - Configure test runners (Jest) for property tests
     - Set minimum iterations to 100 for local, 1000 for CI
@@ -573,13 +573,13 @@ This implementation plan breaks down the FX Trading Backend into discrete coding
     - Log seeds for reproducibility
     - _Requirements: 20.5_
 
-  - [~] 18.3 Set up test coverage reporting
+  - [ ] 18.3 Set up test coverage reporting
     - Configure Jest coverage thresholds: 80% for services, 100% for critical financial operations
     - Generate coverage reports in HTML and JSON formats
     - Configure CI to fail if coverage drops below threshold
     - _Requirements: 20.1, 20.2, 20.3, 20.4_
 
-  - [~] 18.4 Run all tests and verify coverage
+  - [ ] 18.4 Run all tests and verify coverage
     - Run all unit tests
     - Run all property-based tests
     - Run all integration tests
@@ -587,7 +587,7 @@ This implementation plan breaks down the FX Trading Backend into discrete coding
     - Verify all critical paths have 100% coverage
     - _Requirements: 20.1, 20.2, 20.3, 20.4, 20.5_
 
-- [~] 19. Final checkpoint - Production readiness verification
+- [ ] 19. Final checkpoint - Production readiness verification
   - Ensure all tests pass, ask the user if questions arise.
   - Verify all environment variables documented
   - Verify database migrations run successfully
