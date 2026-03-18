@@ -43,18 +43,18 @@ This implementation plan breaks down the FX Trading Backend into discrete coding
     - Add ManyToOne relation to Wallet with CASCADE delete
     - _Requirements: 19.4, 19.9_
 
-  - [-] 2.5 Create Transaction entity
+  - [x] 2.5 Create Transaction entity
     - Define Transaction entity with id (UUID), userId (FK), type (ENUM: FUNDING/CONVERSION/TRADE), sourceCurrency, targetCurrency, sourceAmount, targetAmount, fxRate, status (ENUM: SUCCESS/FAILED, default SUCCESS), idempotencyKey (unique), createdAt
     - Add ManyToOne relation to User with CASCADE delete
     - Add unique constraint on idempotencyKey
     - _Requirements: 19.5_
 
-  - [ ] 2.6 Generate and run database migrations
+  - [x] 2.6 Generate and run database migrations
     - Create migration files for all entities
     - Run migrations to create tables with all constraints and indexes
     - _Requirements: 19.1, 19.7, 19.8_
 
-- [ ] 3. Common utilities and infrastructure
+- [-] 3. Common utilities and infrastructure
   - [ ] 3.1 Create global exception filter
     - Implement GlobalExceptionFilter to catch all exceptions
     - Format error responses with statusCode, message, error, errorCode, requestId, timestamp

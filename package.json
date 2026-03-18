@@ -12,9 +12,11 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "typeorm": "typeorm-ts-node-commonjs",
-    "migration:generate": "npm run typeorm -- migration:generate",
-    "migration:run": "npm run typeorm -- migration:run",
-    "migration:revert": "npm run typeorm -- migration:revert"
+    "migration:generate": "npm run typeorm migration:generate -- -d src/config/data-source.ts",
+    "migration:run": "npm run typeorm migration:run -- -d src/config/data-source.ts",
+    "migration:revert": "npm run typeorm migration:revert -- -d src/config/data-source.ts",
+    "migration:show": "npm run typeorm migration:show -- -d src/config/data-source.ts",
+    "db:setup": "node -e \"require('child_process').execSync(process.platform === 'win32' ? 'powershell -ExecutionPolicy Bypass -File scripts/setup-database.ps1' : 'bash scripts/setup-database.sh', {stdio: 'inherit'})\""
   },
   "keywords": [
     "nestjs",
