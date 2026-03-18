@@ -7,7 +7,7 @@ import { OTP } from '../../entities/otp.entity';
 import { Wallet } from '../../entities/wallet.entity';
 import { WalletBalance } from '../../entities/wallet-balance.entity';
 import { EmailService } from '../email/email.service';
-import { RegisterDto } from '../../common/dto/auth.dto';
+import { RegisterDto, VerifyEmailDto } from '../../common/dto/auth.dto';
 
 @Injectable()
 export class AuthenticationService {
@@ -117,6 +117,87 @@ export class AuthenticationService {
       await queryRunner.rollbackTransaction();
       this.logger.error('Registration failed:', error);
       throw new BadRequestException('Registration failed. Please try again.');
+    } finally {
+      await queryRunner.release();
+    }
+  }
+  /**
+   * Verify user email with OTP
+   */
+  async verifyEmail(verifyEmailDto: VerifyEmailDto): Promise<{ success: boolean; message: string }> {
+    const { userId, otp } = verifyEmailDto;
+
+    // Start transaction
+    const queryRunner = this.userRepository.manager.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      // Find the most recent unused OTP for the user
+      const otpRecord = await queryRunner.manager.findOne(OTP, {
+        where: {
+          userId,
+          isUsed: false,
+        },
+        order: {
+          createdAt: 'DESC',
+        },
+      });
+
+      // Check if OTP exists
+      if (!otpRecord) {
+        throw new BadRequestException('No valid OTP found for this user');
+      }
+
+      // Check if OTP is expired
+      const now = new Date();
+      if (now > otpRecord.expiresAt) {
+        throw new BadRequestException('OTP has expired');
+      }
+
+      // Compare provided OTP with hashed OTP
+      const isOtpValid = await bcrypt.compare(otp, otpRecord.otpHash);
+      if (!isOtpValid) {
+        throw new BadRequestException('Invalid OTP');
+      }
+
+      // Find user
+      const user = await queryRunner.manager.findOne(User, {
+        where: { id: userId },
+      });
+
+      if (!user) {
+        throw new BadRequestException('User not found');
+      }
+
+      // Mark user as verified
+      user.isVerified = true;
+      user.updatedAt = new Date();
+      await queryRunner.manager.save(user);
+
+      // Mark OTP as used
+      otpRecord.isUsed = true;
+      await queryRunner.manager.save(otpRecord);
+
+      // Commit transaction
+      await queryRunner.commitTransaction();
+
+      this.logger.log(`User ${userId} email verified successfully`);
+
+      return {
+        success: true,
+        message: 'Email verified successfully',
+      };
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+
+      // If it's already a BadRequestException, rethrow it
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+
+      this.logger.error('Email verification failed:', error);
+      throw new BadRequestException('Email verification failed. Please try again.');
     } finally {
       await queryRunner.release();
     }

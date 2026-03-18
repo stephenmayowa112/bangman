@@ -101,13 +101,13 @@ This implementation plan breaks down the FX Trading Backend into discrete coding
     - _Requirements: 20.5_
 
 - [-] 5. Authentication service implementation
-  - [-] 5.1 Create AuthenticationService with user registration
+  - [x] 5.1 Create AuthenticationService with user registration
     - Implement register() method: validate email/password, hash password with bcrypt (cost 10), create user, generate 6-digit OTP, hash OTP, set 10-minute expiration, save OTP, send email, create wallet with 1000 NGN
     - Return userId and success message
     - Handle duplicate email with 409 error
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.9, 1.10_
 
-  - [ ] 5.2 Implement email verification
+  - [-] 5.2 Implement email verification
     - Implement verifyEmail() method: validate OTP exists and not expired, compare hashed OTP, mark user as verified, mark OTP as used
     - Return 400 for invalid or expired OTP
     - _Requirements: 2.1, 2.2, 2.3, 2.4_
